@@ -1,0 +1,15 @@
+{
+  "name": "negation",
+  "version": "0.0.1",
+  "description": "A lightweight validation library using negative space programming",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Jefe_Spain <jefe.1988@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+} 
