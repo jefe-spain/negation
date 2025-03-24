@@ -5,11 +5,17 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "docs:dev": "rspress dev",
+    "docs:build": "rspress build",
+    "docs:preview": "rspress preview"
   },
   "author": "Jefe_Spain <jefe.1988@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@rspress/cli": "^0.0.0-next-20230810075445",
+    "@rspress/core": "^1.43.9",
+    "rspress": "^1.43.9",
     "typescript": "^5.5.4"
   }
-} 
+}
