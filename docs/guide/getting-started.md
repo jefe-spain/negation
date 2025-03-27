@@ -17,7 +17,7 @@ yarn add negation
 ```
 
 :::note
-Negation is currently in development (v0.0.1). The package will be published to npm soon.
+Negation is currently in development (v0.0.2). The package will be published to npm soon.
 :::
 
 ## Basic Usage
@@ -100,6 +100,66 @@ if (errors.length > 0) {
   errors.forEach(error => {
     console.log(`- ${error.path.join('.')}: ${error.message}`);
   });
+}
+```
+
+## Asynchronous Validation
+
+Negation supports asynchronous validation for operations requiring database lookups, API calls, or other async processes:
+
+```typescript
+import { negationAsync, negateObjectAsync, notEmpty, notDuplicate } from 'negation';
+
+// Function that simulates checking if a username exists in a database
+async function isUsernameTaken(username: string): Promise<boolean> {
+  // In a real app, this would query a database
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return ['admin', 'root', 'system'].includes(username);
+}
+
+// Validate a username asynchronously
+async function validateUsername(username: string) {
+  try {
+    const validatedUsername = await negationAsync(username, [
+      notEmpty,
+      notDuplicate(isUsernameTaken)
+    ]);
+    console.log('Username is valid:', validatedUsername);
+  } catch (error) {
+    console.error('Username validation failed:', error.message);
+  }
+}
+
+// Validating an entire user object with async constraints
+async function validateUser(user) {
+  try {
+    const validatedUser = await negateObjectAsync(user, {
+      username: [notEmpty, notDuplicate(isUsernameTaken)],
+      email: [notEmpty],
+      age: [notNegative]
+    });
+    console.log('User is valid:', validatedUser);
+  } catch (error) {
+    console.error('User validation failed:', error.message);
+  }
+}
+
+// You can also collect all errors in async validation
+async function validateUserCollect(user) {
+  const result = await negateObjectAsync(user, {
+    username: [notEmpty, notDuplicate(isUsernameTaken)],
+    email: [notEmpty],
+    age: [notNegative]
+  }, { mode: 'collect' });
+  
+  if (!Array.isArray(result)) {
+    console.log('User is valid:', result);
+  } else {
+    console.log('Validation failed with the following errors:');
+    result.forEach(error => {
+      console.log(`- ${error.path.join('.')}: ${error.message}`);
+    });
+  }
 }
 ```
 

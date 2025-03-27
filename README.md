@@ -78,12 +78,63 @@ const errors = negateObject(user, {
 }, { mode: 'collect' });
 ```
 
+### Asynchronous Validation
+
+Negation supports asynchronous validation for operations requiring database lookups, API calls, or other async processes:
+
+```typescript
+import { negationAsync, negateObjectAsync, notEmpty, notDuplicate } from 'negation';
+
+// Mock database lookup function
+async function isUsernameTaken(username: string): Promise<boolean> {
+  // In a real app, this would query a database or API
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return ['admin', 'root', 'system'].includes(username);
+}
+
+// Validate a single value with async constraint
+async function validateUsername(username: string) {
+  try {
+    // Checks both sync and async constraints
+    await negationAsync(username, [
+      notEmpty,
+      notDuplicate(isUsernameTaken)
+    ]);
+    console.log('Username is valid!');
+  } catch (error) {
+    console.error('Invalid username:', error.message);
+  }
+}
+
+// Validate an object with mixed constraints
+async function validateUser(user: User) {
+  const userSchema = {
+    username: [notEmpty, notDuplicate(isUsernameTaken)],
+    age: [notNegative]
+  };
+  
+  // Collect all errors
+  const result = await negateObjectAsync(user, userSchema, { mode: 'collect' });
+  
+  // Check if validation succeeded (result is not an array of errors)
+  if (!Array.isArray(result)) {
+    console.log('User is valid:', result);
+    return result;
+  } else {
+    console.error('Validation errors:', result.map(e => e.message).join(', '));
+    return result;
+  }
+}
+```
+
 ## API
 
 ### Core Functions
 
 - `negation<T>(value: T, constraints: Constraint<T>[], options?: { mode: 'throw' | 'collect' })`
 - `negateObject<T>(obj: T, schema: Schema<T>, options?: { mode: 'throw' | 'collect' })`
+- `negationAsync<T>(value: T, constraints: MixedConstraint<T>[], options?)`
+- `negateObjectAsync<T>(obj: T, schema: AsyncSchema<T>, options?)`
 
 ### Built-in Constraints
 
@@ -97,6 +148,17 @@ const errors = negateObject(user, {
 - `notShorterThan(minLength)`: Ensures string isn't shorter than minimum length
 - `notGreaterThan(max)`: Ensures number doesn't exceed maximum value
 - `notLessThan(min)`: Ensures number isn't less than minimum value
+
+#### Asynchronous Constraints
+- `notDuplicate(checkFn)`: Ensures value isn't a duplicate using async function
+
+### Types
+
+- `Constraint<T>`: Synchronous validation constraint
+- `AsyncConstraint<T>`: Asynchronous validation constraint
+- `MixedConstraint<T>`: Either sync or async constraint
+- `Schema<T>`: Object schema with sync constraints
+- `AsyncSchema<T>`: Object schema with mixed sync/async constraints
 
 ### Errors
 
@@ -113,6 +175,7 @@ Created by Jesus Fernandez.
 ## Getting Help
 
 If you need help or have questions about using Negation, please open an issue on GitHub.
+
 ## Contribute
 
 Contributions are welcome! Here's how you can contribute:

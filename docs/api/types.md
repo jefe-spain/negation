@@ -64,9 +64,32 @@ A constraint can be either:
 - A function that takes a value and a path and throws a `NegationError` if the value is invalid
 - An object with a `validate` method and a `constraint` string
 
+## AsyncConstraint
+
+Type definition for asynchronous constraints:
+
+```typescript
+export type AsyncConstraint<T> = ((value: T, path: readonly string[]) => Promise<void>) | {
+  validate: (value: T, path: readonly string[]) => Promise<void>;
+  constraint: string;
+};
+```
+
+Similar to `Constraint<T>` but:
+- Functions return a Promise
+- The `validate` method returns a Promise
+
+## MixedConstraint
+
+Union type representing either a synchronous or asynchronous constraint:
+
+```typescript
+export type MixedConstraint<T> = Constraint<T> | AsyncConstraint<T>;
+```
+
 ## Schema
 
-Type definition for validation schemas:
+Type definition for synchronous validation schemas:
 
 ```typescript
 export type Schema<T> = {
@@ -75,3 +98,15 @@ export type Schema<T> = {
 ```
 
 A schema is an object where each key corresponds to a property in the object being validated, and the value is an array of constraints for that property.
+
+## AsyncSchema
+
+Type definition for schemas that can include asynchronous constraints:
+
+```typescript
+export type AsyncSchema<T> = {
+  readonly [K in keyof T]?: readonly MixedConstraint<T[K]>[];
+};
+```
+
+Similar to `Schema<T>` but allows both synchronous and asynchronous constraints.

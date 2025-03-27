@@ -4,10 +4,11 @@ title: Constraints
 
 # Constraints
 
-Negation provides a set of built-in constraints for common validation scenarios. These constraints are divided into two categories:
+Negation provides a set of built-in constraints for common validation scenarios. These constraints are divided into three categories:
 
 1. **Basic Constraints**: Simple constraints that can be used directly
 2. **Parameterized Constraints**: Functions that return constraints with specific parameters
+3. **Asynchronous Constraints**: Constraints that perform asynchronous validation
 
 ## Basic Constraints
 
@@ -103,6 +104,40 @@ const validatedValue = negation(value, [notLessThan(10)]);
 ```
 
 If the number is less than the specified minimum value, a `NegationError` will be thrown with the message "Number must not be less than [min]".
+
+## Asynchronous Constraints
+
+### notDuplicate
+
+Creates an asynchronous constraint that ensures a value is not a duplicate by checking against a provided function.
+
+```typescript
+import { negationAsync, notDuplicate } from 'negation';
+
+// Function that checks if a username exists (returns a Promise<boolean>)
+async function isUsernameTaken(username: string): Promise<boolean> {
+  // In a real app, this would check a database
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return ['admin', 'root', 'system'].includes(username);
+}
+
+// Validate asynchronously
+async function validateUsername(username: string) {
+  try {
+    await negationAsync(username, [notDuplicate(isUsernameTaken)]);
+    console.log('Username is valid!');
+  } catch (error) {
+    console.error('Username validation failed:', error.message);
+  }
+}
+```
+
+If the check function returns true (meaning the value is a duplicate), a `NegationError` will be thrown with the message "Value must not be a duplicate".
+
+The `notDuplicate` constraint is useful for:
+- Checking unique usernames or emails in a database
+- Validating that a chosen ID or code isn't already in use
+- Any validation requiring an asynchronous operation
 
 ## Combining Constraints
 

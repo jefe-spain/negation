@@ -8,10 +8,12 @@ This section provides detailed documentation for all the functions, types, and c
 
 ## Overview
 
-Negation provides two main validation functions:
+Negation provides four main validation functions:
 
 - [`negation`](/api/core-functions#negation): For validating single values
 - [`negateObject`](/api/core-functions#negateobject): For validating objects against a schema
+- [`negationAsync`](/api/core-functions#negationasync): For validating single values with async constraints
+- [`negateObjectAsync`](/api/core-functions#negateobjectasync): For validating objects with async constraints
 
 It also provides a set of built-in constraints:
 
@@ -25,6 +27,9 @@ It also provides a set of built-in constraints:
 - [`notShorterThan`](/api/constraints#notshorterthan): Ensures string isn't shorter than minimum length
 - [`notGreaterThan`](/api/constraints#notgreaterthan): Ensures number doesn't exceed maximum value
 - [`notLessThan`](/api/constraints#notlessthan): Ensures number isn't less than minimum value
+
+### Asynchronous Constraints
+- [`notDuplicate`](/api/constraints#notduplicate): Ensures value isn't a duplicate (using async function)
 
 ## Type Definitions
 
