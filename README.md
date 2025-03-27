@@ -11,10 +11,11 @@ Negation takes a different approach to validation by focusing on what data shoul
 - **Negative Logic**: Define boundaries by exclusion - what values must not do or be
 - **Path Tracking**: Errors include paths to invalid fields for clear debugging
 - **Collection Mode**: Choose between throwing on first error or collecting all errors
+- **Async Support**: First-class support for asynchronous validations with database/API checks
 
 This approach often leads to more readable code and better matches how we think about validation rules in natural language. Unlike positive validation approaches that can lead to false positives by only checking what's expected, negative validation helps catch edge cases by explicitly defining what must not occur. For example, validating "input must be a string" might pass for an empty string, while "input must not be empty" clearly prevents this issue.
 
-## Installation _0.0.1 Coming soon_
+## Installation _0.0.2 Coming soon_
 
 ```bash
 🔜 Coming soon 🔜
@@ -87,7 +88,7 @@ import { negationAsync, negateObjectAsync, notEmpty, notDuplicate } from 'negati
 
 // Mock database lookup function
 async function isUsernameTaken(username: string): Promise<boolean> {
-  // In a real app, this would query a database or API
+  // In a real app, this would query a database
   await new Promise(resolve => setTimeout(resolve, 100));
   return ['admin', 'root', 'system'].includes(username);
 }
@@ -186,4 +187,4 @@ Contributions are welcome! Here's how you can contribute:
 
 ## License
 
-MIT 
+MIT
